@@ -12,9 +12,9 @@ The code structure of this repo is consistent with that of FedNLP. The directory
   - Besides the default client sampling procedure (i.e., *uniform sampling without replacement*), we implement another two sampling strategies in our experiments: (1) [Multinomial Distribution-based Sampling (MD)](https://arxiv.org/abs/2107.12211), and (2) [Dynamic Attention-based Sampling (AdaFL)](https://arxiv.org/abs/2108.05765).
 + **[2021.12]**
   - Fix bugs about distributed experiments on BiLSTM, and allow to perform federated learning experiments on BiLSTM.
-  - Add the code for the new federated optimization [SCAFFOLD](https://arxiv.org/abs/1910.06378).
+  - Implement the code for the popular federated optimization [SCAFFOLD](https://arxiv.org/abs/1910.06378).
 + **[2021.11]**
-  - Adopt the code about the non-i.i.d. label-skewed partitioning procedure from ``FedNLP/data/advanced_partition/niid_label.py``  for image classification datasets (only CIFAR-10 and MNIST now). The original partitioning code for CIFAR-10 and MNIST also consider the quantity-skewed cases (i.e., clients have different numbers of training samples), while in our experiments we only consider the label shift problem. You can also use the original code by following the comments in Line 449-455 in ``FedNLP/FedML/fedml_api/data_preprocessing/cifar10/data_loader.py`` (take CIFAR-10 as an example, the code for MNIST is in ``FedNLP/FedML/fedml_api/data_preprocessing/MNIST/data_loader_new.py`` ).
+  - Adopt the code about the non-i.i.d. label-skewed partitioning procedure from ``FedNLP/data/advanced_partition/niid_label.py``  for image classification datasets (only for CIFAR-10 and MNIST now, code for other datasets can be easily adopted from the code for these two datasets). The original partitioning code for CIFAR-10 and MNIST further considers the quantity-skewed case (i.e., clients have different numbers of training samples), while in our experiments we only consider the label shift problem. You can also use the original code by following the comments in Line 449-455 in ``FedNLP/FedML/fedml_api/data_preprocessing/cifar10/data_loader.py`` (take CIFAR-10 as an example, while the code for MNIST is in ``FedNLP/FedML/fedml_api/data_preprocessing/MNIST/data_loader_new.py`` ).
   - Make updates to allow clients to use any of SGD, SGDM and Adam as the local optimizer for the local training.
   - Implement the code for FedGLAD. The core code is mainly in the files ``FedAVGAggregator.py``, ``FedProxAggregator.py`` and ``FedOptAggregator.py``.
 + **[2021.10]**
@@ -52,7 +52,7 @@ pip install mpi4py
 
 #### Login wandb
 
-We follow the FedML and FedNLP to use [wandb](https://wandb.ai/site) for experiment tracking, so please login your wandb account, and modify the argument **--entity** in ``wandb.init()`` to your user name. Specifically,
+We follow the FedML and FedNLP to use [wandb](https://wandb.ai/site) for experiment tracking, so please login your wandb account, and modify the argument **entity** in ``wandb.init()`` to your user name. Specifically,
 
 (1) First, go to [https://wandb.ai/authorize](https://wandb.ai/authorize) to create an account (with Github account).
 
@@ -70,7 +70,7 @@ Take the text classification task as an example, go to ``FedNLP/experiments/cent
 
 ### Code Structure
 
-The code structure is consistent with that of FedNLP, so you can follow the instructions in FedNLP to use our code.
+The code structure is consistent with that of FedNLP, so you can follow the instructions in FedNLP to use our code. **We also update the corresponding README.md in each experiment directory with the detailed explanation of the code usage.**
 
 ### Usage of FedGLAD
 

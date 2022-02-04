@@ -1,4 +1,19 @@
+# Our updates
+
+We fix the bugs to allow to use any of SGD, SGDM and Adam as the optimizer.
+
+An example to run the experiment can be
+
+```bash
+sh run_single.sh 100 0 0 0 resnet56 hetero 200 64 0.1 cifar10 ./../../data/cifar10/ sgd 0 0
+```
+
+
+
+# Following content is from the original README.md
+
 ## Single process training
+
 This is built for single process training to make sure your model and dataset can work well when single process training
 
 
@@ -56,7 +71,6 @@ sh run_single.sh 100 0 0 0 efficientnet hetero 100 32 0.003 gld23k ./../../data/
 ```
 sh run_single.sh 100 0 0 0 mobilenet_v3 hetero 100 1 32 0.1 gld160k your_data_path sgd 0
 ```
-
 
 
 

@@ -540,7 +540,7 @@ if __name__ == "__main__":
         wandb.init(
             # project="federated_nas",
             project="fednlp_bilstm",
-            entity="keven9816",
+            entity="YourEntityName",
             name=str(args.fed_alg) + "-" + str(args.partition_method) + "-r" + str(args.comm_round) + "-e" + str(
                 args.epochs) + "-lr" + str(
                 args.lr) + "-" + str(args.dataset),

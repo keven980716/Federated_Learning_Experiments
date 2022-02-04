@@ -25,25 +25,13 @@ class FedAVGServerManager(ServerManager):
         self.is_preprocessed = is_preprocessed
         self.preprocessed_client_lists = preprocessed_client_lists
 
-        self.init_lr_approx_clients = args.init_lr_approx_clients
-        # total approx rounds = number of approx clients /  number of clients per round
-        self.init_lr_approx_rounds = int(self.init_lr_approx_clients / args.client_num_per_round)
-        self.init_lr_approx_round_idx = 0
-
     def run(self):
         super().run()
 
     def send_init_msg(self):
         # sampling clients
-        if self.init_lr_approx_rounds == self.init_lr_approx_round_idx:
-            client_indexes = self.aggregator.client_sampling(self.round_idx, self.args.client_num_in_total,
-                                                             self.args.client_num_per_round)
-        else:
-            client_indexes = self.aggregator.client_sampling_for_init_lr_approx(self.init_lr_approx_round_idx,
-                                                                                self.round_idx,
-                                                                                self.init_lr_approx_rounds,
-                                                                                self.args.client_num_in_total,
-                                                                                self.args.client_num_per_round)
+        client_indexes = self.aggregator.client_sampling(self.round_idx, self.args.client_num_in_total,
+                                                         self.args.client_num_per_round)
         global_model_params = self.aggregator.get_global_model_params()
         if self.args.is_mobile == 1:
             global_model_params = transform_tensor_to_list(global_model_params)
@@ -62,78 +50,39 @@ class FedAVGServerManager(ServerManager):
         client_index = msg_params.get(MyMessage.MSG_ARG_KEY_CLIENT_INDEX)
         self.aggregator.add_local_trained_result(sender_id - 1, model_params, local_sample_number, client_index)
         ###
-        #self.aggregator.add_local_trained_result(sender_id - 1, model_params, local_sample_number)
+        # self.aggregator.add_local_trained_result(sender_id - 1, model_params, local_sample_number)
         b_all_received = self.aggregator.check_whether_all_receive()
         logging.info("b_all_received = " + str(b_all_received))
         if b_all_received:
-            # if the init lr approximation rounds are finished
-            if self.init_lr_approx_rounds == self.init_lr_approx_round_idx:
-                global_model_params = self.aggregator.aggregate()
-                self.aggregator.test_on_server_for_all_clients(self.round_idx)
+            global_model_params = self.aggregator.aggregate()
+            self.aggregator.test_on_server_for_all_clients(self.round_idx)
 
-                # start the next round
-                self.round_idx += 1
-                if self.round_idx == self.round_num:
-                    post_complete_message_to_sweep_process(self.args)
-                    self.finish()
-                    print('here')
-                    return
-                if self.is_preprocessed:
-                    if self.preprocessed_client_lists is None:
-                        # sampling has already been done in data preprocessor
-                        client_indexes = [self.round_idx] * self.args.client_num_per_round
-                    else:
-                        client_indexes = self.preprocessed_client_lists[self.round_idx]
+            # start the next round
+            self.round_idx += 1
+            if self.round_idx == self.round_num:
+                post_complete_message_to_sweep_process(self.args)
+                self.finish()
+                print('here')
+                return
+            if self.is_preprocessed:
+                if self.preprocessed_client_lists is None:
+                    # sampling has already been done in data preprocessor
+                    client_indexes = [self.round_idx] * self.args.client_num_per_round
                 else:
-                    # sampling clients
-                    client_indexes = self.aggregator.client_sampling(self.round_idx, self.args.client_num_in_total,
-                                                                     self.args.client_num_per_round)
-            
-                print('indexes of clients: ' + str(client_indexes))
-                print("size = %d" % self.size)
-                if self.args.is_mobile == 1:
-                    global_model_params = transform_tensor_to_list(global_model_params)
-
-                for receiver_id in range(1, self.size):
-                    self.send_message_sync_model_to_client(receiver_id, global_model_params,
-                                                           client_indexes[receiver_id - 1])
-
-            # if still in the initial lr approximation rounds
+                    client_indexes = self.preprocessed_client_lists[self.round_idx]
             else:
-                global_model_params = self.aggregator.approximate(total_approximation_round=self.init_lr_approx_rounds)
-                # self.aggregator.test_on_server_for_all_clients(self.round_idx)
+                # sampling clients
+                client_indexes = self.aggregator.client_sampling(self.round_idx, self.args.client_num_in_total,
+                                                                 self.args.client_num_per_round)
 
-                # start the next approximation round
-                self.init_lr_approx_round_idx += 1
+            print('indexes of clients: ' + str(client_indexes))
+            print("size = %d" % self.size)
+            if self.args.is_mobile == 1:
+                global_model_params = transform_tensor_to_list(global_model_params)
 
-                if self.is_preprocessed:
-                    if self.preprocessed_client_lists is None:
-                        # sampling has already been done in data preprocessor
-                        client_indexes = [self.init_lr_approx_round_idx] * self.args.client_num_per_round
-                    else:
-                        client_indexes = self.preprocessed_client_lists[self.init_lr_approx_round_idx]
-                else:
-                    # sampling clients
-                    if self.init_lr_approx_round_idx == self.init_lr_approx_rounds:
-                        print(" ### The initial learning rate approximation is over. ###" + '\n')
-                        # next round will become normal
-                        client_indexes = self.aggregator.client_sampling(self.round_idx, self.args.client_num_in_total,
-                                                                         self.args.client_num_per_round)
-                    else:
-                        client_indexes = self.aggregator.client_sampling_for_init_lr_approx(self.init_lr_approx_round_idx,
-                                                                                            self.round_idx,
-                                                                                            self.init_lr_approx_rounds,
-                                                                                            self.args.client_num_in_total,
-                                                                                            self.args.client_num_per_round)
-
-                print('indexes of clients: ' + str(client_indexes))
-                print("size = %d" % self.size)
-                if self.args.is_mobile == 1:
-                    global_model_params = transform_tensor_to_list(global_model_params)
-
-                for receiver_id in range(1, self.size):
-                    self.send_message_sync_model_to_client(receiver_id, global_model_params,
-                                                           client_indexes[receiver_id - 1])
+            for receiver_id in range(1, self.size):
+                self.send_message_sync_model_to_client(receiver_id, global_model_params,
+                                                       client_indexes[receiver_id - 1])
 
     def send_message_init_config(self, receive_id, global_model_params, client_index):
         message = Message(MyMessage.MSG_TYPE_S2C_INIT_CONFIG, self.get_sender_id(), receive_id)

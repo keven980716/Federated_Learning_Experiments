@@ -41,10 +41,10 @@ class FedProxAggregator(object):
         self.distance_norm_sum = 0.0
         self.centralized_avg_params = None
         self.global_init_lr = 1.0
-        self.init_var_term = 1.0
+        # self.init_var_term = 1.0
         self.exp_var_term = 0.0
-        self.classifier_exp_var_term = 0.0
-        self.encoder_exp_var_term = 0.0
+        # self.classifier_exp_var_term = 0.0
+        # self.encoder_exp_var_term = 0.0
         self.exp_var_term_beta = 0.9
         self.exp_history_lr = 0.0
         self.init_lr_approx_clients_list = []
@@ -111,68 +111,40 @@ class FedProxAggregator(object):
 
         # calculate 2-norm distance between each gradient and average gradient
         distance_list = []
-        # classifier_distance_list, encoder_distance_list = [], []
         for i in range(0, len(model_list)):
             dist = 0
-            # classifier_distance, encoder_distance = 0, 0
             for k in averaged_params.keys():
                 if 'weight' in k or 'bias' in k:
                     if i == 0:
                         dist += torch.norm(averaged_params[k] - original_param_0[k]) ** 2
-                        # if 'classifier' in k or 'fc' in k:
-                        #     classifier_distance += torch.norm(averaged_params[k] - original_param_0[k]) ** 2
-                        # else:
-                        #     encoder_distance += torch.norm(averaged_params[k] - original_param_0[k]) ** 2
                         distance_dict[k].append(
                             (torch.norm(averaged_params[k] - original_param_0[k]) ** 2).item())
                     else:
                         dist += torch.norm(averaged_params[k] - model_list[i][1][k]) ** 2
-                        # if 'classifier' in k or 'fc' in k:
-                        #     classifier_distance += torch.norm(averaged_params[k] - model_list[i][1][k]) ** 2
-                        # else:
-                        #     encoder_distance += torch.norm(averaged_params[k] - model_list[i][1][k]) ** 2
                         distance_dict[k].append(
                             (torch.norm(averaged_params[k] - model_list[i][1][k]) ** 2).item())
                 else:
                     print(k)
             distance_list.append(dist.item())
-            # classifier_distance_list.append(classifier_distance.item())
-            # encoder_distance_list.append(encoder_distance.item())
         # print("grad 2-norm distance: ", distance_list)
 
         # calculate each gradient's 2-norm
         grad_norm_list = []
-        # classifier_grad_norm_list, encoder_grad_norm_list = [], []
         for i in range(0, len(model_list)):
             grad_norm = 0
-            # classifier_grad_norm, encoder_grad_norm = 0, 0
             for k in averaged_params.keys():
                 if 'weight' in k or 'bias' in k:
                     if i == 0:
                         grad_norm += torch.norm(
                             original_param_0[k] - self.trainer.model.state_dict()[k].cpu()) ** 2
-                        # if 'classifier' in k or 'fc' in k:
-                        #     classifier_grad_norm += torch.norm(
-                        #         original_param_0[k] - self.trainer.model.state_dict()[k].cpu()) ** 2
-                        # else:
-                        #     encoder_grad_norm += torch.norm(
-                        #         original_param_0[k] - self.trainer.model.state_dict()[k].cpu()) ** 2
                         grad_norm_dict[k].append((torch.norm(
                             original_param_0[k] - self.trainer.model.state_dict()[k].cpu()) ** 2).item())
                     else:
                         grad_norm += torch.norm(
                             model_list[i][1][k] - self.trainer.model.state_dict()[k].cpu()) ** 2
-                        # if 'classifier' in k or 'fc' in k:
-                        #     classifier_grad_norm += torch.norm(
-                        #         model_list[i][1][k] - self.trainer.model.state_dict()[k].cpu()) ** 2
-                        # else:
-                        #     encoder_grad_norm += torch.norm(
-                        #         model_list[i][1][k] - self.trainer.model.state_dict()[k].cpu()) ** 2
                         grad_norm_dict[k].append((torch.norm(
                             model_list[i][1][k] - self.trainer.model.state_dict()[k].cpu()) ** 2).item())
             grad_norm_list.append(grad_norm.item())
-            # classifier_grad_norm_list.append(classifier_grad_norm.item())
-            # encoder_grad_norm_list.append(encoder_grad_norm.item())
         # print("grad norm list: ", grad_norm_list)
         # print("mean of square grads: ", np.mean(grad_norm_list))
         # wandb.log({"Mean Square Norm of Client's Grad.": np.mean(grad_norm_list)})
@@ -185,15 +157,8 @@ class FedProxAggregator(object):
             # wandb.log({k: var_dict[k]})
 
         var_term = pow(1 / (1 - np.sum(distance_list) / np.sum(grad_norm_list)), 1 / 2)
-        classifier_var_term = 1 #pow(
-            # 1 / (1 - np.sum(classifier_distance_list) / np.sum(classifier_grad_norm_list)), 1 / 2)
-        encoder_var_term = 1 # pow(1 / (1 - np.sum(encoder_distance_list) / np.sum(encoder_grad_norm_list)), 1 / 2)
-        wandb.log({"Classifier Var Term": classifier_var_term})
-        wandb.log({"Encoder Var Term": encoder_var_term})
         if self.update_step == 0:  # self.args.var_adjust_begin_round:
             self.exp_var_term = var_term
-            self.classifier_exp_var_term = classifier_var_term
-            self.encoder_exp_var_term = encoder_var_term
             for k in var_dict.keys():
                 self.exp_var_term_dict[k] = var_dict[k]
 
@@ -202,31 +167,20 @@ class FedProxAggregator(object):
             adjusted_lr = self.args.server_lr
         else:
             adjusted_lr = self.args.server_lr * self.args.client_num_per_round
-        adjusted_classifier_lr = adjusted_lr
-        adjusted_encoder_lr = adjusted_lr
         for k in adjusted_lr_dict.keys():
             adjusted_lr_dict[k] = adjusted_lr
-        # clip large LR
+        # dynamic bounds
         up_bound = (1 + self.lr_bound_factor * self.update_step) * adjusted_lr
         low_bound = (1 - self.lr_bound_factor * self.update_step) * adjusted_lr
         # whether use var_based lr adjustment
         if self.args.use_var_adjust:
             if self.update_step > (self.args.var_adjust_begin_round - 1):
-                if self.args.only_adjusted_layer == 'classifier':
-                    adjusted_classifier_lr *= (classifier_var_term / self.classifier_exp_var_term)
-                elif self.args.only_adjusted_layer == 'encoder':
-                    adjusted_encoder_lr *= (encoder_var_term / self.encoder_exp_var_term)
-                elif self.args.only_adjusted_layer == 'separate':
-                    adjusted_classifier_lr *= (classifier_var_term / self.classifier_exp_var_term)
-                    adjusted_encoder_lr *= (encoder_var_term / self.encoder_exp_var_term)
-                elif self.args.only_adjusted_layer == 'group':
+                if self.args.only_adjusted_layer == 'group':
                     for k in adjusted_lr_dict.keys():
                         adjusted_lr_dict[k] *= (var_dict[k] / self.exp_var_term_dict[k])
                 else:
                     adjusted_lr *= (var_term / self.exp_var_term)
         adjusted_lr = max(min(adjusted_lr, up_bound), low_bound)
-        adjusted_classifier_lr = max(min(adjusted_classifier_lr, up_bound), low_bound)
-        adjusted_encoder_lr = max(min(adjusted_encoder_lr, up_bound), low_bound)
         #
         for k in adjusted_lr_dict.keys():
             adjusted_lr_dict[k] = max(min(adjusted_lr_dict[k], up_bound), low_bound)
@@ -234,9 +188,6 @@ class FedProxAggregator(object):
         # whether warm-up lr
         if self.args.warmup_steps != 0 and self.update_step < self.args.warmup_steps:
             adjusted_lr = 1.0 + self.update_step * (adjusted_lr - 1.0) / self.args.warmup_steps
-            adjusted_classifier_lr = 1.0 + self.update_step * (
-                        adjusted_classifier_lr - 1.0) / self.args.warmup_steps
-            adjusted_encoder_lr = 1.0 + self.update_step * (adjusted_encoder_lr - 1.0) / self.args.warmup_steps
 
         for k in averaged_params.keys():
             if 'weight' in k or 'bias' in k:
@@ -245,29 +196,12 @@ class FedProxAggregator(object):
                 else:
                     if self.args.only_adjusted_layer == 'group':
                         current_lr = adjusted_lr_dict[k]
-                    elif self.args.only_adjusted_layer == 'classifier':
-                        if 'classifier' in k or 'fc' in k:
-                            current_lr = adjusted_classifier_lr
-                        else:
-                            current_lr = adjusted_lr
-                    elif self.args.only_adjusted_layer == 'encoder':
-                        if 'classifier' in k or 'fc' in k:
-                            current_lr = adjusted_lr
-                        else:
-                            current_lr = adjusted_encoder_lr
-                    elif self.args.only_adjusted_layer == 'separate':
-                        if 'classifier' in k or 'fc' in k:
-                            current_lr = adjusted_classifier_lr
-                        else:
-                            current_lr = adjusted_encoder_lr
                     else:
                         current_lr = adjusted_lr
                 averaged_params[k] = self.trainer.model.state_dict()[k].cpu() + current_lr * \
                                      (averaged_params[k] - self.trainer.model.state_dict()[k].cpu())
 
         wandb.log({"Exact Server LR": adjusted_lr})
-        wandb.log({"Exact Server Classifier LR": adjusted_classifier_lr})
-        wandb.log({"Exact Server Encoder LR": adjusted_encoder_lr})
         # print("Exact Server LR: ", adjusted_lr)
         wandb.log({"Var Term": var_term})
         # wandb.log({"Exp Var Term": self.exp_var_term})
@@ -278,8 +212,6 @@ class FedProxAggregator(object):
 
         if self.update_step > 0:  # self.args.var_adjust_begin_round:
             self.exp_var_term = self.exp_var_term_beta * self.exp_var_term + (1 - self.exp_var_term_beta) * var_term
-            self.classifier_exp_var_term = self.exp_var_term_beta * self.classifier_exp_var_term + (1 - self.exp_var_term_beta) * classifier_var_term
-            self.encoder_exp_var_term = self.exp_var_term_beta * self.encoder_exp_var_term + (1 - self.exp_var_term_beta) * encoder_var_term
             for k in self.exp_var_term_dict.keys():
                 self.exp_var_term_dict[k] = self.exp_var_term_beta * self.exp_var_term_dict[k] + (1 - self.exp_var_term_beta) * var_dict[k]
         self.update_step += 1
@@ -305,7 +237,7 @@ class FedProxAggregator(object):
 
     def _generate_validation_set(self, num_samples=10000):
         if self.args.dataset.startswith("stackoverflow"):
-            test_data_num  = len(self.test_global.dataset)
+            test_data_num = len(self.test_global.dataset)
             sample_indices = random.sample(range(test_data_num), min(num_samples, test_data_num))
             subset = torch.utils.data.Subset(self.test_global.dataset, sample_indices)
             sample_testset = torch.utils.data.DataLoader(subset, batch_size=self.args.batch_size)

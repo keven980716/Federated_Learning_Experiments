@@ -1,4 +1,21 @@
+# Our updates
+
+In our paper, we only make the updates to allow conducting experiments on 20NewsGroups and AGNews. To successfuly conduct experiments on other datasets, please modify the code of other datasets in ``FedNLP/data/raw_data_loader/obsolete/`` by following the example we have made for 20NewsGroups and AGNews in ``FedNLP/data/raw_data_loader/obsolete/news_20/data_loader.py`` and ``FedNLP/data/raw_data_loader/obsolete/AGNews/data_loader.py`` .
+
+
+
+To run experiments, we provide a bash script, and an example can be
+
+```shell
+sh run_bilstm.sh
+```
+
+
+
+# Following content is from the original README.md
+
 ## Experiment Tracking
+
 ```shell script
 pip install --upgrade wandb
 wandb login ee0b5f53d949c84cee7decbe7a629e63fb2f8408
@@ -329,7 +346,6 @@ Pstdev of eval accuracy: 0.83
 | semeval_2010_task8 | 300 | 1 |  0.5 | 0.3 |  10 |  100 |  300 |  adam |  0.001 |  0.0001 | 30 | 560 |
 | sentiment140 | 300 |  1 | 0.5 |  0.3 |  256 |  32 |  300 |  adam |  0.001 |  0.0005 | 10 | 6029 |
 | sst_2 | 100 |  1 |  0.5 | 0.3 |  32 |  32 |  300 |  adam |  0.001 |  0.0005 | 50 | 291 |
-
 
 
 

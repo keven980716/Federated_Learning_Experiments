@@ -1,4 +1,43 @@
+
+
+# Our updates
+
++ Besides the original code for FedAvg, we add the code for FedOPT to make it applicable on distributed BiLSTM experiments.
+
++ We only make the updates to allow conducting experiments on 20NewsGroups and AGNews. To successfuly conduct experiments on other datasets, please modify the code of other datasets in ``FedNLP/data/raw_data_loader/obsolete/`` by following the example we have made for 20NewsGroups and AGNews in ``FedNLP/data/raw_data_loader/obsolete/news_20/data_loader.py`` and ``FedNLP/data/raw_data_loader/obsolete/AGNews/data_loader.py`` .
+
++ We add the code for FedGLAD. There are several important arguments when using FedGLAD:
+
+  (1) **--use_var_adjust**: value chosen from {0, 1}. Setting 1 means using FedGLAD, and setting 0 represents using the original 
+  baseline without server learning rate adaptation.
+
+  (2) **--only_adjusted_layer**: value chosen from {'group', 'none'}. Setting 'group' means using the parameter group–wise
+  adaptation, and setting 'none' represents the universal adaptation.
+
+  (3) **--lr_bound_factor**: the value of the bounding factor gamma. Default is 0.02.
+
+  (4) **--client_sampling_strategy**: the choice of the client sampling strategy, can be chosen from {'uniform', 'MD', 'AdaFL'}.
+
+  
+
+
+
+To run experiments, we provide a bash script, and examples can be
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1 sh run_bilstm_fedavg.sh
+```
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1 sh run_bilstm_fedopt.sh
+```
+
+
+
+# Following content is from the original README.md
+
 ## Installation
+
 http://doc.fedml.ai/#/installation-distributed-computing
 
 ## Experimental Tracking

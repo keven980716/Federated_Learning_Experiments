@@ -110,17 +110,17 @@ def load_data(args, dataset_name):
                              partition_method=args.partition_method, tokenize=True)
     elif dataset_name == "semeval_2010_task8":
         logging.info("load_data. dataset_name = %s" % dataset_name)
-        data_loader = data_preprocessing.SemEval2010Task8.data_loader. \
+        data_loader = data.raw_data_loader.obsolete.SemEval2010Task8.data_loader. \
             ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                              partition_method=args.partition_method, tokenize=True)
     elif dataset_name == "sentiment140":
         logging.info("load_data. dataset_name = %s" % dataset_name)
-        data_loader = data_preprocessing.Sentiment140.data_loader. \
+        data_loader = data.raw_data_loader.obsolete.Sentiment140.data_loader. \
             ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                              partition_method=args.partition_method, tokenize=True)
     elif dataset_name == "sst_2":
         logging.info("load_data. dataset_name = %s" % dataset_name)
-        data_loader = data_preprocessing.SST_2.data_loader. \
+        data_loader = data.raw_data_loader.obsolete.SST_2.data_loader. \
             ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                              partition_method=args.partition_method, tokenize=True)
     else:
@@ -347,7 +347,7 @@ if __name__ == "__main__":
     # initialize the wandb machine learning experimental tracking platform (https://wandb.ai/automl/fednlp).
     wandb.init(
         project="fednlp_bilstm",
-        entity="keven9816",
+        entity="YourEntityName",
         name="FedCentralized" + "-" + str(args.dataset) + "-" + str(args.model) + "-" + str(embedding_name) + "-e" +
              str(args.epochs) + "-lr" + str(args.lr),
         config=args
@@ -358,8 +358,8 @@ if __name__ == "__main__":
     # We fix these two, so that we can reproduce the result.
     random.seed(0)
     np.random.seed(0)
-    torch.manual_seed(0)
-    torch.cuda.manual_seed_all(0)
+    torch.manual_seed(1)
+    torch.cuda.manual_seed_all(1)
 
     # load data
     dataset = load_data(args, args.dataset)

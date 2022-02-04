@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     if process_id == 0:
         # initialize the wandb machine learning experimental tracking platform (https://wandb.ai/automl/fednlp).
-        wandb.init(project="fednlp_20news", entity="keven9816", name="FedNLP-" + str(args.fl_algorithm) +
+        wandb.init(project="fednlp_20news", entity="YourEntityName", name="FedNLP-" + str(args.fl_algorithm) +
                                                            "-TC-" + str(args.dataset) + "-" + str(
             args.model_name) + "-freeze-" + args.freeze_layers if args.freeze_layers else "" + " FL_ALG=" + str(args.fl_algorithm) 
                    + " partition=" + args.partition_method + " S_LR=" + str(args.server_lr) + " S_OPT=" + str(args.server_optimizer) +

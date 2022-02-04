@@ -21,10 +21,6 @@ class FedAVGClientManager(ClientManager):
         self.trainer = trainer
         self.num_rounds = args.comm_round
         self.round_idx = 0
-        self.init_lr_approx_clients = args.init_lr_approx_clients
-        # total approx rounds = number of approx clients /  number of clients per round
-        self.init_lr_approx_rounds = int(self.init_lr_approx_clients / args.client_num_per_round)
-        self.init_lr_approx_round_idx = 0
 
     def run(self):
         super().run()
@@ -36,27 +32,16 @@ class FedAVGClientManager(ClientManager):
                                               self.handle_message_receive_model_from_server)
 
     def handle_message_init(self, msg_params):
-        if self.init_lr_approx_rounds == self.init_lr_approx_round_idx:
-            global_model_params = msg_params.get(MyMessage.MSG_ARG_KEY_MODEL_PARAMS)
-            client_index = msg_params.get(MyMessage.MSG_ARG_KEY_CLIENT_INDEX)
+        global_model_params = msg_params.get(MyMessage.MSG_ARG_KEY_MODEL_PARAMS)
+        client_index = msg_params.get(MyMessage.MSG_ARG_KEY_CLIENT_INDEX)
 
-            if self.args.is_mobile == 1:
-                global_model_params = transform_list_to_tensor(global_model_params)
+        if self.args.is_mobile == 1:
+            global_model_params = transform_list_to_tensor(global_model_params)
 
-            self.trainer.update_model(global_model_params)
-            self.trainer.update_dataset(int(client_index))
-            self.round_idx = 0
-            self.__train(client_index=client_index)
-        else:
-            global_model_params = msg_params.get(MyMessage.MSG_ARG_KEY_MODEL_PARAMS)
-            client_index = msg_params.get(MyMessage.MSG_ARG_KEY_CLIENT_INDEX)
-            if self.args.is_mobile == 1:
-                global_model_params = transform_list_to_tensor(global_model_params)
-
-            self.trainer.update_model(global_model_params)
-            self.trainer.update_dataset(int(client_index))
-            self.init_lr_approx_round_idx = 0
-            self.__train(client_index=client_index)
+        self.trainer.update_model(global_model_params)
+        self.trainer.update_dataset(int(client_index))
+        self.round_idx = 0
+        self.__train(client_index=client_index)
 
     def start_training(self):
         self.round_idx = 0
@@ -71,10 +56,8 @@ class FedAVGClientManager(ClientManager):
             model_params = transform_list_to_tensor(model_params)
         self.trainer.update_model(model_params)
         self.trainer.update_dataset(int(client_index))
-        if self.init_lr_approx_rounds == self.init_lr_approx_round_idx:
-            self.round_idx += 1
-        else:
-            self.init_lr_approx_round_idx += 1
+        self.round_idx += 1
+
         self.__train(client_index=client_index)
         if self.round_idx == self.num_rounds - 1:
             post_complete_message_to_sweep_process(self.args)
@@ -90,15 +73,6 @@ class FedAVGClientManager(ClientManager):
         self.send_message(message)
 
     def __train(self, client_index=None):
-        if self.init_lr_approx_rounds == self.init_lr_approx_round_idx:
-            logging.info("#######training########### round_id = %d" % self.round_idx)
-            ###  Before: no local_loss
-            weights, local_sample_num, local_loss = self.trainer.train(round_idx=self.round_idx)
-            self.send_model_to_server(0, weights, local_sample_num, client_index)
-            ###
-        else:
-            logging.info("#######training########### approx_round_id = %d" % self.init_lr_approx_round_idx)
-            ###  Before: no local_loss
-            weights, local_sample_num, local_loss = self.trainer.train()
-            self.send_model_to_server(0, weights, local_sample_num, client_index)
-            ###
+        logging.info("#######training########### round_id = %d" % self.round_idx)
+        weights, local_sample_num, local_loss = self.trainer.train(round_idx=self.round_idx)
+        self.send_model_to_server(0, weights, local_sample_num, client_index)

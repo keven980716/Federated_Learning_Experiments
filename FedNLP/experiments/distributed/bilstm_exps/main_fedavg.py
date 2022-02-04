@@ -208,31 +208,31 @@ def load_data(args, dataset_name):
             client_data_loaders.append(client_data_loader)
     elif dataset_name == "semeval_2010_task8":
         logging.info("load_data. dataset_name = %s" % dataset_name)
-        server_data_loader = data_preprocessing.SemEval2010Task8.data_loader. \
+        server_data_loader = data.raw_data_loader.obsolete.SemEval2010Task8.data_loader. \
             ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                              partition_method=args.partition_method, tokenize=True)
         for client_index in range(server_data_loader.get_attributes()["n_clients"]):
-            client_data_loader = data_preprocessing.SemEval2010Task8.data_loader. \
+            client_data_loader = data.raw_data_loader.obsolete.SemEval2010Task8.data_loader. \
                 ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                                  partition_method=args.partition_method, tokenize=True, client_idx=client_index)
             client_data_loaders.append(client_data_loader)
     elif dataset_name == "sentiment140":
         logging.info("load_data. dataset_name = %s" % dataset_name)
-        server_data_loader = data_preprocessing.Sentiment140.data_loader. \
+        server_data_loader = data.raw_data_loader.obsolete.Sentiment140.data_loader. \
             ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                              partition_method=args.partition_method, tokenize=True)
         for client_index in range(server_data_loader.get_attributes()["n_clients"]):
-            client_data_loader = data_preprocessing.Sentiment140.data_loader. \
+            client_data_loader = data.raw_data_loader.obsolete.Sentiment140.data_loader. \
                 ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                                  partition_method=args.partition_method, tokenize=True, client_idx=client_index)
             client_data_loaders.append(client_data_loader)
     elif dataset_name == "sst_2":
         logging.info("load_data. dataset_name = %s" % dataset_name)
-        server_data_loader = data_preprocessing.SST_2.data_loader. \
+        server_data_loader = data.raw_data_loader.obsolete.SST_2.data_loader. \
             ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                              partition_method=args.partition_method, tokenize=True)
         for client_index in range(server_data_loader.get_attributes()["n_clients"]):
-            client_data_loader = data_preprocessing.SST_2.data_loader. \
+            client_data_loader = data.raw_data_loader.obsolete.SST_2.data_loader. \
                 ClientDataLoader(os.path.abspath(args.data_file), os.path.abspath(args.partition_file),
                                  partition_method=args.partition_method, tokenize=True, client_idx=client_index)
             client_data_loaders.append(client_data_loader)
@@ -424,7 +424,7 @@ if __name__ == "__main__":
         wandb.init(
             # project="federated_nas",
             project="fednlp_20news_bilstm",
-            entity="keven9816",
+            entity="YourEntityName",
             name="FedAVG(d)-" + str(args.partition_method) + "-r" + str(args.comm_round) + "-e" + str(
                 args.epochs) + "-C_LR" + str(
                 args.lr) + "-" + str(args.dataset) + " S_LR=" + str(args.server_lr) + " use_var_adjust=" + str(args.use_var_adjust) + " scale_server_lr=" + str(args.scale_server_lr) +
