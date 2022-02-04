@@ -1,0 +1,4 @@
+[submodule "FedML"]
+	path = FedML
+	url = https://github.com/keven980716/FedML.git
+	ignore = all
