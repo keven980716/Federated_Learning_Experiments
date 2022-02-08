@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a research platform for conducting federated (machine) learning experiments. This code is mainly based on the two open-sourced federated learning platforms **[FedML](https://github.com/FedML-AI/FedML)** and **[FedNLP](https://github.com/FedML-AI/FedNLP)**, while we will continue to make updates for the broader research (e.g., add more federated optimization methods). **If you find this code helpful for your research, please also do not forget to cite the papers of above two platforms**.
+This is a research platform for conducting federated (machine) learning experiments. This code is mainly based on the two open-sourced federated learning platforms **[FedML](https://github.com/FedML-AI/FedML)** and **[FedNLP](https://github.com/FedML-AI/FedNLP)**, while we will continue to make updates for the broader research (e.g., add more federated optimization methods). **If you find this code helpful for your research, please also consider to cite the papers of above two platforms**.
 
 ## Overview
 
@@ -12,7 +12,7 @@ The code structure of this repo is consistent with that of FedNLP. The directory
   - Besides the default client sampling procedure (i.e., *uniform sampling without replacement*), we implement another two sampling strategies in our experiments: (1) [Multinomial Distribution-based Sampling (MD)](https://arxiv.org/abs/2107.12211), and (2) [Dynamic Attention-based Sampling (AdaFL)](https://arxiv.org/abs/2108.05765).
 + **[2021.12]**
   - Fix bugs about distributed experiments on BiLSTM, and allow to perform federated learning experiments on BiLSTM.
-  - Implement the code for the popular federated optimization [SCAFFOLD](https://arxiv.org/abs/1910.06378).
+  - Implement the code for the popular federated optimization method [SCAFFOLD](https://arxiv.org/abs/1910.06378).
 + **[2021.11]**
   - Adopt the code about the non-i.i.d. label-skewed partitioning procedure from ``FedNLP/data/advanced_partition/niid_label.py``  for image classification datasets (only for CIFAR-10 and MNIST now, code for other datasets can be easily adopted from the code for these two datasets). The original partitioning code for CIFAR-10 and MNIST further considers the quantity-skewed case (i.e., clients have different numbers of training samples), while in our experiments we only consider the label shift problem. You can also use the original code by following the comments in Line 449-455 in ``FedNLP/FedML/fedml_api/data_preprocessing/cifar10/data_loader.py`` (take CIFAR-10 as an example, while the code for MNIST is in ``FedNLP/FedML/fedml_api/data_preprocessing/MNIST/data_loader_new.py`` ).
   - Make updates to allow clients to use any of SGD, SGDM and Adam as the local optimizer for the local training.
@@ -29,7 +29,7 @@ The code structure of this repo is consistent with that of FedNLP. The directory
 
 You can first follow the instructation in [FedNLP](https://github.com/FedML-AI/FedNLP) to install FedNLP and FedML at the same time, then copy our code into the downloaded directory.
 
-Also, after `git clone`-ing this repository, you run the following command for installation:
+Also, you can `git clone` this repository, and run the following command for installation:
 
 ```bash
 conda create -n fednlp python=3.7
