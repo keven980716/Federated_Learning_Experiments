@@ -29,13 +29,13 @@ wandb
 
 # data
 *.rar
-*.csv
+# *.csv
 *.dat
 cifar-10-batches-py
 *.tar.gz
 *.zip
 *.json
-*.png
+# *.png
 
 data/cifar10/*-python
 data/cifar100/*-python
@@ -47,7 +47,7 @@ data/text_classification/shakespeare/train
 data/text_classification/shakespeare/test
 data/stackoverflow/datasets
 
-data/
+# data/
 
 # android
 .gradle
