@@ -186,8 +186,8 @@ class FedProxAggregator(object):
             adjusted_lr_dict[k] = max(min(adjusted_lr_dict[k], up_bound), low_bound)
 
         # whether warm-up lr
-        if self.args.warmup_steps != 0 and self.update_step < self.args.warmup_steps:
-            adjusted_lr = 1.0 + self.update_step * (adjusted_lr - 1.0) / self.args.warmup_steps
+        if self.args.server_lr_warmup_rounds != 0 and self.update_step < self.args.server_lr_warmup_rounds:
+            adjusted_lr = 1.0 + self.update_step * (adjusted_lr - 1.0) / self.args.server_lr_warmup_rounds
 
         for k in averaged_params.keys():
             if 'weight' in k or 'bias' in k:

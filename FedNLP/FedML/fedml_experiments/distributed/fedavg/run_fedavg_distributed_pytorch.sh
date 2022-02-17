@@ -36,7 +36,7 @@ mpirun -np $PROCESS_NUM -hostfile ./mpi_host_file python3 ./main_fedavg.py \
   --ci $CI \
   --server_lr $SLR \
   --init_lr_approx_clients 0 --use_var_adjust 0 \
-  --scale_server_lr 0 --warmup_steps 0 \
+  --scale_server_lr 0 --server_lr_warmup_rounds 0 \
   --var_adjust_begin_round 0 --only_adjusted_layer group \
   --lr_bound_factor 0.02 --client_sampling_strategy uniform
 

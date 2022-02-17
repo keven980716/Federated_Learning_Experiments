@@ -41,7 +41,7 @@ python -m fedavg_main_tc \
   --client_optimizer sgd --client_momentum 0.0 \
   --server_optimizer sgd --server_momentum 0.0 \
   --init_lr_approx_clients 0 --use_var_adjust 0 \
-  --scale_server_lr 0 --warmup_steps 0 \
+  --scale_server_lr 0 --server_lr_warmup_rounds 0 \
   --var_adjust_begin_round 0 --only_adjusted_layer group \
   --fedprox_mu 0.001 --use_reweight 0 \
   --lr_bound_factor 0.02 --manual_seed 1234

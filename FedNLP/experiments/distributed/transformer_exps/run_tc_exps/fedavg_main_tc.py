@@ -80,7 +80,7 @@ if __name__ == "__main__":
                    + " partition=" + args.partition_method + " S_LR=" + str(args.server_lr) + " S_OPT=" + str(args.server_optimizer) +
                    " C_LR=" + str(args.lr) + " C_OPT=" + str(args.client_optimizer) + " C_MOM=" + str(args.client_momentum) +
                    " use_var_adjust=" + str(args.use_var_adjust) + " scale_server_lr=" + str(args.scale_server_lr) +
-                   " approx_clients=" + str(args.init_lr_approx_clients) + " warmup_rounds=" + str(args.warmup_steps) +
+                   " approx_clients=" + str(args.init_lr_approx_clients) + " warmup_rounds=" + str(args.server_lr_warmup_rounds) +
                    " var_adjust_begin_round=" + str(args.var_adjust_begin_round) + " only_adjusted_layer=" + str(args.only_adjusted_layer) +
                    " fedprox_mu=" + str(args.fedprox_mu) + " use_reweight=" + str(args.use_reweight) + " lr_bound_factor=" +
                    str(args.lr_bound_factor) + " seed=" + str(args.manual_seed),

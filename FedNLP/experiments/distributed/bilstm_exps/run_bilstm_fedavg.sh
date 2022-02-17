@@ -37,7 +37,7 @@ python -m main_fedavg \
     --output_dir "tmp/fedavg_${DATA_NAME}_output/" \
     --ci $CI \
     --init_lr_approx_clients 0 --use_var_adjust 0 \
-    --scale_server_lr 0 --warmup_steps 0 \
+    --scale_server_lr 0 --server_lr_warmup_rounds 0 \
     --var_adjust_begin_round 0 --only_adjusted_layer group \
     --use_reweight 0 \
     --lr_bound_factor 0.02 --manual_seed 0

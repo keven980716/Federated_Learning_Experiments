@@ -233,8 +233,8 @@ def add_federated_args(parser):
                         help='whether to scale server lr due to larger global batch size')
 
     # whether use warm-up at the beginning
-    parser.add_argument('--warmup_steps', type=int, default=0, metavar='N',
-                        help='lr warm-up steps (i.e. rounds)')
+    parser.add_argument('--server_lr_warmup_rounds', type=int, default=0, metavar='N',
+                        help='server lr warm-up rounds')
 
     # the round idx when lr adjustment begins
     parser.add_argument('--var_adjust_begin_round', type=int, default=0, metavar='N',

@@ -159,8 +159,8 @@ def add_args(parser):
                         help='whether to scale server lr due to larger global batch size')
 
     # whether use warm-up at the beginning
-    parser.add_argument('--warmup_steps', type=int, default=0, metavar='N',
-                        help='lr warm-up steps (i.e. rounds)')
+    parser.add_argument('--server_lr_warmup_rounds', type=int, default=0, metavar='N',
+                        help='server lr warm-up rounds')
 
     # the round idx when lr adjustment begins
     parser.add_argument('--var_adjust_begin_round', type=int, default=0, metavar='N',
@@ -436,7 +436,7 @@ if __name__ == "__main__":
             name="FedOpt-" + str(args.partition_method) + "-r" + str(args.comm_round) + "-e" + str(
                 args.epochs) + "-C_LR" + str(
                 args.lr) + "-" + str(args.dataset) + "S_OPT=" + str(args.server_optimizer) + " S_LR=" + str(args.server_lr) + " use_var_adjust=" + str(args.use_var_adjust) + " scale_server_lr=" + str(args.scale_server_lr) +
-                   " approx_clients=" + str(args.init_lr_approx_clients) + " warmup_rounds=" + str(args.warmup_steps) +
+                   " approx_clients=" + str(args.init_lr_approx_clients) + " warmup_rounds=" + str(args.server_lr_warmup_rounds) +
                    " var_adjust_begin_round=" + str(args.var_adjust_begin_round) + " only_adjusted_layer=" + str(args.only_adjusted_layer) +
                    " use_reweight=" + str(args.use_reweight) + " lr_bound_factor=" +
                    str(args.lr_bound_factor) + " seed=" + str(args.manual_seed),
