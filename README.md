@@ -93,7 +93,16 @@ We provide some bash scripts for examples to help to conduct quick experiments (
 If you find this code helpful for your research, please cite our work as:
 
 ```
-
+@article{
+yang2023when,
+title={When to Trust Aggregated Gradients: Addressing Negative Client Sampling in Federated Learning},
+author={Wenkai Yang and Yankai Lin and Guangxiang Zhao and Peng Li and Jie Zhou and Xu Sun},
+journal={Transactions on Machine Learning Research},
+issn={2835-8856},
+year={2023},
+url={https://openreview.net/forum?id=v73h3bYE2Z},
+note={}
+}
 ```
 
 Also, don't forget to cite FedNLP and FedML as
