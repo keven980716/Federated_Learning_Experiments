@@ -8,6 +8,9 @@ This is a research platform for conducting federated (machine) learning experime
 
 The code structure of this repo is consistent with that of FedNLP. The directory ``FedML`` is in the ``FedNLP``. Based on the FedML and FedNLP, we make the following important updates:
 
++ **[2024.4]**
+  - [TODO] Update the code to include the methods implemented in the paper [Decentralized Decoupled Training for Federated Long-Tailed Learning](https://arxiv.org/pdf/2301.10394.pdf).
+
 + **[2022.1]**
   - Besides the default client sampling procedure (i.e., *uniform sampling without replacement*), we implement another two sampling strategies in our experiments: (1) [Multinomial Distribution-based Sampling (MD)](https://arxiv.org/abs/2107.12211), and (2) [Dynamic Attention-based Sampling (AdaFL)](https://arxiv.org/abs/2108.05765).
 + **[2021.12]**
