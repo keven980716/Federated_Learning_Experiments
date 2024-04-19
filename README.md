@@ -9,7 +9,7 @@ This is a research platform for conducting federated (machine) learning experime
 The code structure of this repo is consistent with that of FedNLP. The directory ``FedML`` is in the ``FedNLP``. Based on the FedML and FedNLP, we make the following important updates:
 
 + **[2024.4]**
-  - [TODO] Update the code to include the methods implemented in the paper [Decentralized Decoupled Training for Federated Long-Tailed Learning](https://arxiv.org/pdf/2301.10394.pdf).
+  - Update the code to include the methods for **federated long-tailed learning** implemented in the paper [Decentralized Decoupled Training for Federated Long-Tailed Learning](https://openreview.net/forum?id=hw7inQwRxB), which include: (1) [Fed-Focal Loss](https://arxiv.org/abs/2011.06283); (2) [Ratio Loss](https://ojs.aaai.org/index.php/AAAI/article/view/17219); (3) [CLIMB](https://openreview.net/forum?id=Xo0lbDt975); (4) [CReFF](https://www.ijcai.org/proceedings/2022/0308.pdf); (5) [RedGrape](https://openreview.net/forum?id=hw7inQwRxB).
 
 + **[2022.1]**
   - Besides the default client sampling procedure (i.e., *uniform sampling without replacement*), we implement another two sampling strategies in our experiments: (1) [Multinomial Distribution-based Sampling (MD)](https://arxiv.org/abs/2107.12211), and (2) [Dynamic Attention-based Sampling (AdaFL)](https://arxiv.org/abs/2108.05765).
@@ -53,29 +53,16 @@ sudo apt install libopenmpi-dev
 pip install mpi4py
 ```
 
-#### Login wandb
-
-We follow the FedML and FedNLP to use [wandb](https://wandb.ai/site) for experiment tracking, so please login your wandb account, and modify the argument **entity** in ``wandb.init()`` to your user name. Specifically,
-
-(1) First, go to [https://wandb.ai/authorize](https://wandb.ai/authorize) to create an account (with Github account).
-
-(2) Then, use the command line
-
-```bash
-wandb login
-```
-
-(3) Paste the api key to login.
-
-After login the wandb, you may still get the error like:
-*'wandb.errors.error.CommError: Permission denied, ask the project owner to grant you access'*.
-Take the text classification task as an example, go to ``FedNLP/experiments/centralized/transformer_exps/main_tc.py``, in **Line 47**, modify the argument `entity` to your user name of wandb.
 
 ### Code Structure
 
 The code structure is consistent with that of FedNLP, so you can follow the instructions in FedNLP to use our code. **We also update the corresponding README.md in each experiment directory with the detailed explanation of the code usage.**
 
-### Usage of FedGLAD
+
+### Usage for Federated Long-Tailed Learning Experiments
+To run the experiments included in the paper [Decentralized Decoupled Training for Federated Long-Tailed Learning](https://openreview.net/forum?id=hw7inQwRxB) under the federated long-tailed learning setting, we put the main code and the corresponding README file in the directory ``FedNLP/FedML/fedml_experiments/distributed/fedavg_imb``.
+
+### Usage of [FedGLAD](https://openreview.net/pdf?id=v73h3bYE2Z)
 
 Based on the existing federated optimization methods, we implement the code of FedGLAD. There are several important arguments when using FedGLAD:
 
