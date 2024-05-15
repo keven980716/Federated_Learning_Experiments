@@ -95,6 +95,19 @@ note={}
 }
 ```
 
+```
+@article{
+yang2024decentralized,
+title={Decentralized Decoupled Training for Federated Long-Tailed Learning},
+author={Wenkai Yang and Deli Chen and Hao Zhou and Fandong Meng and Jie Zhou and Xu Sun},
+journal={Transactions on Machine Learning Research},
+issn={2835-8856},
+year={2024},
+url={https://openreview.net/forum?id=hw7inQwRxB},
+note={}
+}
+```
+
 Also, don't forget to cite FedNLP and FedML as
 
 ```
